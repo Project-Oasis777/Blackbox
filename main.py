@@ -12,6 +12,27 @@ ScreenManager:
     SettingsScreen:
     SetupScreen:
 
+<SettingsScreen>:
+    name: 'settings'
+    MDBoxLayout:
+        orientation: 'vertical'
+        padding: "20dp"
+        spacing: "10dp"
+        
+        MDLabel:
+            text: "Growth & Community"
+            font_style: "H6"
+            
+        MDRaisedButton:
+            text: "Invite via Social Media"
+            icon: "share-variant"
+            on_release: app.invite_friend("share_sheet")
+            
+        MDRaisedButton:
+            text: "Invite via SMS"
+            icon: "message-text"
+            on_release: app.invite_friend("sms", "0000000") # Replace with contact number
+
 <MainScreen>:
     name: 'main'
     MDBoxLayout:
@@ -85,6 +106,20 @@ class SecureMessenger(MDApp):
     def show_dialog(self, title, text):
         self.dialog = MDDialog(title=title, text=text, size_hint=(0.8, None))
         self.dialog.open()
+from kivy import webbrowser
+from plyer import share
+
+    def invite_friend(self, platform, phone_number=None):
+    invite_msg = "Join me on Secure Envoy for military-grade encrypted messaging! Download here: [Your_Link_Here]"
+    
+    if platform == "share_sheet":
+        # This opens the native Android menu with WhatsApp, FB, etc.
+        share.share(title="Invite to Secure Envoy", text=invite_msg)
+    
+    elif platform == "sms":
+        # Directly opens SMS with the number and message
+        webbrowser.open(f"sms:{phone_number}?body={invite_msg}")
+
 
 if __name__ == '__main__':
     SecureMessenger().run()
