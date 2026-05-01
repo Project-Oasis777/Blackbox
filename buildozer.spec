@@ -1,27 +1,29 @@
 [app]
-
 title = Secure Envoy
 package.name = secureenvoy
-package.domain = org.wayne
+package.domain = org.test
+
 source.dir = .
-source.include_exts = py,png,jpg,kv,atlas,pem
+source.include_exts = py,png,jpg,kv,atlas
+
 version = 0.1
 
-# Stable requirements - removed cryptography/openssl for now
-requirements = python3,kivy==2.3.0,kivymd==2.0.1,requests,plyer,pyjnius
+# CRITICAL: Requirements must include cryptography and its backends
+requirements = python3, kivy==2.3.0, kivymd==1.2.0, pillow, cryptography, pyopenssl, plyer
 
 orientation = portrait
+
+# Android specific
 fullscreen = 0
-
-android.permissions = INTERNET,READ_CONTACTS,WRITE_CONTACTS,ACCESS_WIFI_STATE,CHANGE_WIFI_STATE,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION,NEARBY_WIFI_DEVICES,SEND_SMS
-
-android.archs = arm64-v8a,armeabi-v7a
+android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
 android.api = 33
 android.minapi = 21
-android.accept_sdk_license = True
-android.allow_backup = True
+android.ndk = 25b
+android.archs = arm64-v8a, armeabi-v7a
 
-# Stability & build flags
-p4a.branch = develop
+# Ensure the cryptography recipe is used correctly
+p4a.branch = master
+
+[buildozer]
 log_level = 2
 warn_on_root = 1
