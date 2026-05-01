@@ -108,16 +108,19 @@ class SecureMessenger(MDApp):
     def show_dialog(self, title, text):
         self.dialog = MDDialog(title=title, text=text, size_hint=(0.8, None))
         self.dialog.open()
-        
-    def invite_friend(self, platform, phone_number=None):
-    invite_msg = "Join me on Secure Envoy for military-grade encrypted messaging! Download here: [Your_Link_Here]"
-        if platform == "share_sheet":
-        # This opens the native Android menu with WhatsApp, FB, etc.
-        share.share(title="Invite to Secure Envoy", text=invite_msg)
-        elif platform == "sms":
-        # Directly opens SMS with the number and message
-        webbrowser.open(f"sms:{phone_number}?body={invite_msg}")
 
+    def invite_friend(self, platform, phone_number=None):
+        invite_msg = "Join me on Secure Envoy for military-grade encrypted messaging! Download here: [Your_Link_Here]"
+        
+        if platform == "share_sheet":
+            # This opens the native Android menu with WhatsApp, FB, etc.
+            share.share(title="Invite to Secure Envoy", text=invite_msg)
+        elif platform == "sms":
+            # Directly opens SMS with the number and message
+            webbrowser.open(f"sms:{phone_number}?body={invite_msg}")
+
+
+ 
 
 
     
