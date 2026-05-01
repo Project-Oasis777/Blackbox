@@ -9,27 +9,32 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 60                     # First build can take 30-50+ minutes
+    timeout-minutes: 90
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Cache Buildozer dependencies (highly recommended - makes future builds much faster)
-      - name: Cache Buildozer
+      - name: Cache Buildozer dependencies
         uses: actions/cache@v4
         with:
-          path: |
-            .buildozer
-            \~/.buildozer
+          path: .buildozer
           key: buildozer-${{ hashFiles('buildozer.spec') }}
           restore-keys: |
             buildozer-
 
-      - name: Build APK with Buildozer (Official Docker)
+      - name: Build APK with Buildozer
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/home/user/hostcwd \
+            -v ${{ github.workspace }}/.buildozer:/home/user/.buildozer \
             -w /home/user/hostcwd \
             kivy/buildozer:latest \
-            buildozer -v android debug
+            android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SecureEnvoy-APK
+          path: bin/*.apk
+          if-no-files-found: error
