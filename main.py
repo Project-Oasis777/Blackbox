@@ -6,6 +6,7 @@ from kivymd.uix.dialog import MDDialog
 import threading
 from kivy import webbrowser
 from plyer import share
+import threading
 
 # Professional UI Design with Navigation and Theme
 KV = '''
@@ -86,7 +87,13 @@ class SecureMessenger(MDApp):
         self.theme_cls.primary_palette = "BlueGray"
         self.theme_cls.theme_style = "Dark" # Default to Dark for Professional look
         return Builder.load_string(KV)
+    
+    def on_send_click(self):
+        threading.Thread(target=self.send_to_firebase).start()
 
+    def send_to_firebase(self):
+        requests.post("https://your-db.firebaseio.com/msg.json", json={"text": "Hi"})
+    
     def toggle_theme(self, switch, value):
         if value:
             self.theme_cls.theme_style = "Light"
@@ -110,20 +117,20 @@ class SecureMessenger(MDApp):
         self.dialog.open()
 
     def invite_friend(self, platform, phone_number=None):
-        invite_msg = "Join me on Secure Envoy for military-grade encrypted messaging! Download here: [Your_Link_Here]"
-        
+        invite_msg = "Join me on Secure Envoy for military-grade encrypted messaging!"
+
         if platform == "share_sheet":
-            # This opens the native Android menu with WhatsApp, FB, etc.
+            # 12 spaces total here
             share.share(title="Invite to Secure Envoy", text=invite_msg)
         elif platform == "sms":
-            # Directly opens SMS with the number and message
+            # 12 spaces total here
             webbrowser.open(f"sms:{phone_number}?body={invite_msg}")
 
 
- 
-
 
     
+
+
 
 if __name__ == '__main__':
     SecureMessenger().run()
