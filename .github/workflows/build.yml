@@ -7,9 +7,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build with Buildozer
-        uses: n8marti/buildozer-action@fix-user-doesnt-exist
+        uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
+          workdir: .
           buildozer_version: stable
           python_version: 3.11
       - name: Upload APK
