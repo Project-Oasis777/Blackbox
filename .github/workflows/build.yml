@@ -1,40 +1,30 @@
 name: Build Android APK
-
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Cache Buildozer dependencies
-        uses: actions/cache@v4
-        with:
-          path: .buildozer
-          key: buildozer-${{ hashFiles('buildozer.spec') }}
-          restore-keys: |
-            buildozer-
-
-      - name: Build APK with Buildozer
+      # THIS STEP IS THE FIX:
+      # It installs the headers needed to compile the 'cryptography' recipe
+      # without needing to install things into /usr/local/bin/
+      - name: Install Build Dependencies
         run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/home/user/hostcwd \
-            -v ${{ github.workspace }}/.buildozer:/home/user/.buildozer \
-            -w /home/user/hostcwd \
-            kivy/buildozer:latest \
-            android debug
+          sudo apt update
+          sudo apt install -y build-essential libltdl-dev libffi-dev libssl-dev python3-dev autoconf automake libtool pkg-config
 
-      - name: Upload APK
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          # Use master to ensure you have the latest cryptography recipes
+          buildozer_version: master
+
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SecureEnvoy-APK
-          path: bin/*.apk
-          if-no-files-found: error
+          name: package
+          path: ${{ steps.buildozer.outputs.filename }}
